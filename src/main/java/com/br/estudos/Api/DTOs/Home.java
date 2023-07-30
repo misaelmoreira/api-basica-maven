@@ -1,4 +1,4 @@
-package com.br.estudos.Api.DTO;
+package com.br.estudos.Api.DTOs;
 
 public class Home {
     public String getMensagem(){
