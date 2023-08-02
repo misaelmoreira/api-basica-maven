@@ -1,6 +1,7 @@
 package com.br.estudos.Api.servicos;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import com.br.estudos.Api.interfaces.IObjectDTO;
 
@@ -14,25 +15,30 @@ public class BuilderDTOModel {
     public static Object build(IObjectDTO iObjectDTO, Object objectModel)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException,
             NoSuchMethodException, SecurityException {
-        if (objectModel == null)
-            objectModel = objectModel.getClass().getDeclaredConstructor().newInstance();
 
         for (var methodDTO : iObjectDTO.getClass().getMethods()) {
 
             if (methodDTO.getName().contains("get")) {
                 String prop = methodDTO.getName().replace("get", "");
-                try{
-                    var setMethod = objectModel.getClass().getMethod("set" + prop, new Class[] { String.class});
-                
-                    var value = methodDTO.invoke(iObjectDTO); 
+                var setMethod = getMethod(objectModel, "set" + prop);
+                if (setMethod != null) {
+                    var value = methodDTO.invoke(iObjectDTO);
                     setMethod.invoke(objectModel, value);
                 }
-                catch(Exception err){
-
-                }                
             }
         }
 
         return objectModel;
     }
+
+    public static Method getMethod(Object objectModel, String methodName) {
+        var methods  = objectModel.getClass().getMethods();
+        for(var method : methods){
+            if(method.getName().equals(methodName)){
+                return method;
+            }
+        }        
+        return null;
+    }
+
 }

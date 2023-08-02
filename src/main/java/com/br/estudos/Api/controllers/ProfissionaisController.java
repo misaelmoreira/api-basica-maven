@@ -20,6 +20,7 @@ import com.br.estudos.Api.DTOs.ProfissionalMinimoDTO;
 import com.br.estudos.Api.modelView.ErroModelView;
 import com.br.estudos.Api.models.Profissional;
 import com.br.estudos.Api.servicos.BuilderDTOModel;
+import com.br.estudos.Api.servicos.GenericBuilderDTOModel;
 
 @RestController
 @RequestMapping("/profissionais")
@@ -58,7 +59,7 @@ public class ProfissionaisController {
             return ResponseEntity.status(404).body(new ErroModelView("Profissonal não Encontrado"));
         }
 
-        var profissional = (Profissional)BuilderDTOModel.build(profissionalMinimoDTO, repo.findById(id).get());
+        var profissional = new GenericBuilderDTOModel<Profissional>(Profissional.class).build(profissionalMinimoDTO, repo.findById(id).get());
         repo.save(profissional);
         return ResponseEntity.status(200).body(profissional);
     }    
